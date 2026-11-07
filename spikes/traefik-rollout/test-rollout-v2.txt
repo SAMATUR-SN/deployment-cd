@@ -1,0 +1,235 @@
+Test sur http://localhost:8088/ pendant 90s (Ctrl+C pour arrêter)
+22:12:47  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:47  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:47  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:47  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:47  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:48  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:48  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:48  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:48  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:49  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:49  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:49  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:49  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:50  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:50  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:50  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:50  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:51  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:51  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:51  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:51  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:52  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:52  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:52  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:52  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:53  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:53  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:53  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:53  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:54  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:54  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:54  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:54  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:55  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:55  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:55  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:55  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:56  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:56  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:56  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:56  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:57  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:57  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:57  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:57  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:57  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:58  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:58  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:58  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:59  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:59  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:59  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:12:59  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:00  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:00  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:00  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:00  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:01  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:01  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:01  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:01  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:02  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:02  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:02  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:02  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:03  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:03  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:03  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:03  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:04  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:04  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:04  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:04  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:05  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:05  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:05  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:05  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:06  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:06  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:06  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:06  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:07  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:07  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:07  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:07  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:07  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:08  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:08  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:08  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:08  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:09  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:09  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:09  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:09  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:10  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:10  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:10  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:10  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:11  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:11  Application v1 - conteneur 83d0460e8615
+ [HTTP 200]
+22:13:13   [HTTP 000]
+22:13:15   [HTTP 000]
+22:13:18   [HTTP 000]
+22:13:20   [HTTP 000]
+22:13:22   [HTTP 000]
+22:13:24   [HTTP 000]
+22:13:27   [HTTP 000]
+22:13:29   [HTTP 000]
+22:13:31   [HTTP 000]
+22:13:33   [HTTP 000]
+22:13:35   [HTTP 000]
+22:13:38   [HTTP 000]
+22:13:40   [HTTP 000]
+22:13:42   [HTTP 000]
+22:13:44   [HTTP 000]
+22:13:47   [HTTP 000]
+22:13:49   [HTTP 000]
+22:13:51   [HTTP 000]
+22:13:53   [HTTP 000]
+22:13:56   [HTTP 000]
+22:13:58   [HTTP 000]
+22:14:00   [HTTP 000]
+22:14:02   [HTTP 000]
+22:14:05   [HTTP 000]
+22:14:07   [HTTP 000]
+22:14:09   [HTTP 000]
+22:14:11   [HTTP 000]
+22:14:14   [HTTP 000]
+22:14:16   [HTTP 000]
+22:14:18   [HTTP 000]
+
+Requêtes réussies : 100
+Requêtes en échec : 30
+RÉSULTAT : coupure détectée.
