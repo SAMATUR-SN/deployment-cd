@@ -32,6 +32,7 @@ pipeline {
         JWT_SECRET_CREDS     = 'samatur-jwt-secret'      // Secret text (32 caractères minimum)
         ROLLOUT_TIMEOUT      = '180'                     // secondes d'attente d'un conteneur "healthy"
         DRAIN_SECONDS        = '3'                       // pause de drainage du frontend avant arrêt
+        BACKEND_DRAIN_SECONDS = '10'                     // idem backend (2 contrôles de santé de 2 s + marge)
         CHECK_BASE_URL       = ''                        // vide = http://host.docker.internal:<port Traefik>
     }
 
@@ -93,7 +94,13 @@ pipeline {
                 withStack {
                     // Si le nouveau conteneur ne devient pas "healthy", docker-rollout le supprime
                     // et l'ancien continue de servir : l'échec ne coupe rien.
-                    sh 'docker rollout --timeout "$ROLLOUT_TIMEOUT" -f docker-compose.yml backend'
+                    // Drainage : /tmp/draining rend l'ancien conteneur "unhealthy" ; Traefik cesse alors
+                    // de lui envoyer du trafic, puis il est arrêté (arrêt en douceur de Spring Boot).
+                    sh '''
+                        docker rollout --timeout "$ROLLOUT_TIMEOUT" \\
+                          --pre-stop-hook "touch /tmp/draining; sleep $BACKEND_DRAIN_SECONDS" \\
+                          -f docker-compose.yml backend
+                    '''
                 }
             }
         }

@@ -11,6 +11,7 @@
 #
 # Variables facultatives (jeton réel, pour obtenir des 200 au lieu de 401) :
 #   TEST_USER=etatcivil1@samatur.sn TEST_PASSWORD=...   (comptes de démonstration)
+#   CURL_TIMEOUT=10   délai maximal par requête en secondes (3 par défaut)
 #
 # Codes comptés comme « service disponible » :
 #   /               : 200 (page d'accueil Angular)
@@ -20,6 +21,7 @@ set -uo pipefail
 
 BASE="${1:-http://localhost:8088}"
 DURATION="${2:-240}"
+CURL_TIMEOUT="${CURL_TIMEOUT:-3}"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -51,7 +53,8 @@ probe() {
   end=$((SECONDS + DURATION))
   while [ "$SECONDS" -lt "$end" ]; do
     ts=$(now)
-    code=$(curl -s -o /dev/null -m 3 "${AUTH[@]}" -w '%{http_code}' "$url" || true)
+    out=$(curl -s -o /dev/null -m "$CURL_TIMEOUT" "${AUTH[@]}" -w '%{http_code} %{exitcode} %{time_total}' "$url" || true)
+    read -r code cexit ctime <<< "$out"
     accepted=0
     for c in "$@"; do [ "$code" = "$c" ] && accepted=1; done
     if [ "$accepted" = 1 ]; then
@@ -61,7 +64,8 @@ probe() {
       ko=$((ko + 1))
       [ -z "$first" ] && first="$ts"
       last="$ts"
-      line="${ts}  ${name}  ${code:-000}  ECHEC"
+      # curl=28 : délai dépassé ; 7 : connexion refusée ; 52 : réponse vide ; 56 : connexion coupée
+      line="${ts}  ${name}  ${code:-000}  curl=${cexit:-?}  ${ctime:-?}s  ECHEC"
     fi
     echo "$line" >> "$TMP/${name}.log"
     sleep 0.2
