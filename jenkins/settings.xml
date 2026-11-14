@@ -1,0 +1,14 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0">
+  <profiles>
+    <profile>
+      <id>nvd-miroir</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <nvdDatafeedUrl>https://dependency-check.github.io/DependencyCheck_Builder/nvd_cache/nvdcve-{0}.json.gz</nvdDatafeedUrl>
+        <nvdValidForHours>24</nvdValidForHours>
+      </properties>
+    </profile>
+  </profiles>
+</settings>

@@ -1,0 +1,23 @@
+// Job de test de la tâche #04 : vérifie que Jenkins dispose de tous les outils
+// et qu'il peut parler au démon Docker de la machine hôte.
+pipeline {
+  agent any
+  stages {
+    stage('Outils') {
+      steps {
+        sh 'java -version'
+        sh 'mvn -v'
+        sh 'node -v'
+        sh 'npm -v'
+        sh 'trivy --version'
+      }
+    }
+    stage('Docker') {
+      steps {
+        sh 'docker version'
+        sh 'docker compose version'
+        sh 'docker rollout --help | head -n 3'
+      }
+    }
+  }
+}

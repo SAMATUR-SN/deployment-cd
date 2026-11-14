@@ -1,0 +1,108 @@
+# =============================================================================
+# Sama Tur - pile de déploiement : Traefik + frontend + backend + PostgreSQL 18
+#
+# Routage : Traefik reçoit tout le trafic (un seul port publié sur la machine)
+#   /      -> frontend (nginx, port 8080 dans le conteneur)
+#   /api   -> backend  (Spring Boot, port 8080 dans le conteneur)
+#
+# Règles imposées par docker-rollout (mise à jour sans coupure) pour backend et frontend :
+#   - pas de container_name (deux instances coexistent pendant la mise à jour) ;
+#   - pas de "ports:" publiés (sinon le second conteneur ne peut pas démarrer) ;
+#   - un healthcheck (le plugin attend que le nouveau conteneur soit "healthy").
+#
+# Secrets : POSTGRES_PASSWORD et SAMATUR_JWT_SECRET ne sont PAS dans .env.
+# Jenkins les injecte depuis ses credentials ; à la main, les exporter dans le terminal.
+# Valeurs non secrètes (ports, images, tags) : voir .env
+# =============================================================================
+name: samatur
+
+services:
+  traefik:
+    image: traefik:v3
+    restart: unless-stopped
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --ping=true
+      - --api.insecure=true          # tableau de bord : démonstration uniquement, à retirer en production
+    ports:
+      - "${TRAEFIK_HTTP_PORT:-8088}:80"            # trafic applicatif
+      - "${TRAEFIK_DASHBOARD_PORT:-8081}:8080"     # tableau de bord Traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-samatur_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant (credential Jenkins postgres-password)}
+    volumes:
+      # PostgreSQL 18 : monter /var/lib/postgresql (et non .../data)
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  backend:
+    image: ${BACKEND_IMAGE:-salioudiop/samatur-backend}:${BACKEND_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-samatur_db}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant (credential Jenkins postgres-password)}
+      SAMATUR_JWT_SECRET: ${SAMATUR_JWT_SECRET:?SAMATUR_JWT_SECRET manquant (credential Jenkins samatur-jwt-secret, 32 caractères minimum)}
+      SAMATUR_JWT_EXPIRATION: ${SAMATUR_JWT_EXPIRATION:-28800000}
+      SAMATUR_DELAI_CIBLE_JOURS: ${SAMATUR_DELAI_CIBLE_JOURS:-15}
+    # Le healthcheck (GET /health) est celui de l'image du backend.
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.rule=PathPrefix(`/api`)
+      - traefik.http.routers.backend.entrypoints=web
+      - traefik.http.routers.backend.priority=10
+      - traefik.http.routers.backend.middlewares=retry@docker
+      - traefik.http.services.backend.loadbalancer.server.port=8080
+      - traefik.http.services.backend.loadbalancer.healthcheck.path=/health
+      - traefik.http.services.backend.loadbalancer.healthcheck.interval=5s
+      - traefik.http.services.backend.loadbalancer.healthcheck.timeout=3s
+      # Nouvelle tentative si la connexion est refusée (ancien conteneur en cours d'arrêt)
+      - traefik.http.middlewares.retry.retry.attempts=3
+      - traefik.http.middlewares.retry.retry.initialinterval=100ms
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-salioudiop/samatur-frontend}:${FRONTEND_TAG:-latest}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+      start_period: 3s
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=PathPrefix(`/`)
+      - traefik.http.routers.frontend.entrypoints=web
+      - traefik.http.routers.frontend.priority=1
+      - traefik.http.routers.frontend.middlewares=retry@docker
+      - traefik.http.services.frontend.loadbalancer.server.port=8080
+      # /health répond 503 en mode drainage : Traefik retire alors le conteneur du routage (~1 s)
+      - traefik.http.services.frontend.loadbalancer.healthcheck.path=/health
+      - traefik.http.services.frontend.loadbalancer.healthcheck.interval=1s
+      - traefik.http.services.frontend.loadbalancer.healthcheck.timeout=1s
+
+volumes:
+  pgdata:

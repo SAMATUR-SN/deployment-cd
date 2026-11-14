@@ -1,2 +1,2 @@
-.env
+jenkins/.env
 *.log

@@ -1,0 +1,21 @@
+# Valeurs NON secrètes de la pile (ce fichier est versionné).
+# Les secrets (POSTGRES_PASSWORD, SAMATUR_JWT_SECRET) viennent des credentials Jenkins : jamais ici.
+
+# Ports publiés sur la machine (Traefik est le seul service exposé)
+TRAEFIK_HTTP_PORT=8088
+TRAEFIK_DASHBOARD_PORT=8081
+
+# Images (compte Docker Hub en minuscules) et tags par défaut.
+# Le job deployment-cd remplace les tags à chaque déploiement.
+BACKEND_IMAGE=salioudiop/samatur-backend
+FRONTEND_IMAGE=salioudiop/samatur-frontend
+BACKEND_TAG=latest
+FRONTEND_TAG=latest
+
+# Base de données
+POSTGRES_DB=samatur_db
+POSTGRES_USER=postgres
+
+# Backend : durée de validité des jetons (ms, 8 h) et délai cible des alertes (jours)
+SAMATUR_JWT_EXPIRATION=28800000
+SAMATUR_DELAI_CIBLE_JOURS=15
