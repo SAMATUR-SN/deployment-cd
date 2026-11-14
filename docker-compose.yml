@@ -73,7 +73,19 @@ services:
       SERVER_SHUTDOWN: graceful
       SPRING_LIFECYCLE_TIMEOUT_PER_SHUTDOWN_PHASE: 15s
     stop_grace_period: 30s   # laisse le temps de l'arrêt en douceur avant SIGKILL
-    # Le healthcheck (GET /health) est celui de l'image du backend.
+    # Même test que le HEALTHCHECK de l'image (GET /health), plus le fichier de drainage :
+    # avant l'arrêt de l'ancien conteneur, le déploiement crée /tmp/draining ; le conteneur
+    # devient « unhealthy » en ~4 s et Traefik, qui ignore les conteneurs non sains,
+    # arrête de lui envoyer du trafic AVANT qu'il ne s'arrête (comme pour le frontend).
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - |
+          [ ! -f /tmp/draining ] && bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080 && printf "GET /health HTTP/1.0\r\nHost: localhost\r\n\r\n" >&3 && grep -q "\"status\":\"UP\"" <&3'
+      interval: 2s
+      timeout: 3s
+      retries: 2
+      start_period: 90s
     labels:
       - traefik.enable=true
       - traefik.http.routers.backend.rule=PathPrefix(`/api`)

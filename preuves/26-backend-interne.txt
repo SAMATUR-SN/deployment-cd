@@ -1,0 +1,11 @@
+Début : 22:43:52.028 - 240s sur http://traefik
+Lancer MAINTENANT le job deployment-cd avec un nouveau tag (backend et/ou frontend).
+Fin : 22:47:52.213
+
+front   réussies : 1061   échecs : 0
+api     réussies : 1043   échecs : 1
+        premier échec : 22:44:50.711   dernier : 22:44:50.711
+        22:44:50.711  api  000  curl=28  3.024637s  ECHEC
+health  réussies : 1061   503 de drainage ou échecs : 0   (informatif, non compté)
+
+RÉSULTAT : coupure détectée.
