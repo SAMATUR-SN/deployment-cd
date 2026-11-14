@@ -9,8 +9,71 @@ services:
       - "50000:50000"    # agents JNLP
     volumes:
       - jenkins_home:/var/jenkins_home
-      # Optionnel : pour builder/scanner des images Docker locales (nécessite docker-cli dans l'image)
-      # - /var/run/docker.sock:/var/run/docker.sock
+      # Accès au démon Docker de la machine hôte (nécessaire aux jobs de build et de déploiement).
+      # Attention : ce montage donne à Jenkins un contrôle quasi total de Docker sur l'hôte.
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Le socket Docker Desktop appartient à root:root (GID 0, droits 660) : on ajoute
+    # l'utilisateur jenkins au groupe 0 pour qu'il puisse l'utiliser, sans passer Jenkins en root.
+    # Sur un serveur Linux classique, remplacer par le GID du groupe docker
+    # (docker exec jenkins ls -ln /var/run/docker.sock).
+    group_add:
+      - "0"
+    # DNS publics : le DNS de Docker Desktop échoue par moments (updates.jenkins.io introuvable).
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    # Testcontainers (tests du backend) joint les conteneurs de test via host.docker.internal.
+    # Avec des DNS personnalisés ce nom n'est plus résolu : on le déclare explicitement.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ---------------------------------------------------------------------------
+  # SonarQube (analyse de qualité) : Jenkins le joint à http://sonarqube:9000
+  # Interface depuis le navigateur : http://localhost:9000
+  # ---------------------------------------------------------------------------
+  sonar-db:
+    image: postgres:16-alpine
+    container_name: sonar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sonar
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: ${SONAR_DB_PASSWORD:?à définir dans le fichier .env (voir .env.example)}
+    volumes:
+      - sonar_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonar -d sonar"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    restart: unless-stopped
+    depends_on:
+      sonar-db:
+        condition: service_healthy
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: ${SONAR_DB_PASSWORD:?à définir dans le fichier .env (voir .env.example)}
+      # Mémoire bornée (machine partagée avec Jenkins et les tests)
+      SONAR_WEB_JAVAOPTS: "-Xmx512m"
+      SONAR_CE_JAVAOPTS: "-Xmx512m"
+      SONAR_SEARCH_JAVAOPTS: "-Xms512m -Xmx512m"
+      # Autorise le webhook vers Jenkins (adresse privée du réseau Docker, bloquée par défaut)
+      SONAR_VALIDATEWEBHOOKS: "false"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
 
 volumes:
   jenkins_home:
+  sonar_db_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:

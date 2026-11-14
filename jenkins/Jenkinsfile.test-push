@@ -1,0 +1,26 @@
+// Job de test de la tâche #05 : pousse une image de test sur Docker Hub avec les credentials Jenkins.
+pipeline {
+  agent any
+  environment {
+    IMAGE = 'salioudiop/jenkins-test'
+  }
+  stages {
+    stage('Image de test') {
+      steps {
+        sh 'docker pull alpine:3.20'
+        sh 'docker tag alpine:3.20 $IMAGE:${BUILD_NUMBER}'
+      }
+    }
+    stage('Push Docker Hub') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
+                                          usernameVariable: 'DH_USER',
+                                          passwordVariable: 'DH_TOKEN')]) {
+          sh 'echo "$DH_TOKEN" | docker login -u "$DH_USER" --password-stdin'
+          sh 'docker push $IMAGE:${BUILD_NUMBER}'
+          sh 'docker logout'
+        }
+      }
+    }
+  }
+}
