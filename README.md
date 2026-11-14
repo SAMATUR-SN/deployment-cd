@@ -101,7 +101,7 @@ Les déploiements ne se chevauchent pas : `disableConcurrentBuilds()` met les su
 `docker rollout <service>` fait passer le service de 1 à 2 conteneurs : le nouveau démarre à côté de l'ancien, qui continue de servir. Une fois le nouveau **sain** (healthcheck Docker), l'ancien est arrêté et supprimé.
 
 - **Frontend** : juste avant l'arrêt, un *hook* crée `/tmp/draining` dans l'ancien conteneur. Son `/health` répond alors `503`, Traefik le retire du routage en environ 1 seconde, puis il est arrêté sans requête en cours.
-- **Backend** : pas de drainage par fichier. Spring Boot reçoit `SIGTERM`, et un **middleware de nouvelle tentative** de Traefik (3 essais) rejoue les rares requêtes refusées pendant l'arrêt. Pour terminer proprement les requêtes déjà en cours, l'équipe backend peut ajouter `server.shutdown=graceful` dans `application.properties`.
+- **Backend** : pas de drainage par fichier. Le compose active l'**arrêt en douceur** de Spring Boot (`SERVER_SHUTDOWN=graceful`, `stop_grace_period: 30s`) : à l'arrêt, l'ancien backend refuse les nouvelles connexions et termine les requêtes en cours, tandis qu'un **middleware de nouvelle tentative** de Traefik (3 essais) rejoue sur le nouveau conteneur les requêtes refusées. Ces réglages sont dans le conteneur actuel seulement après un premier redéploiement du backend : le premier déploiement qui les introduit utilise encore l'ancienne configuration, donc faire un déploiement « d'échauffement » avant de mesurer.
 - Si le nouveau conteneur **ne devient pas sain** dans les 180 secondes (`ROLLOUT_TIMEOUT`), docker-rollout abandonne et retire le nouveau : l'ancienne version reste en service et le build échoue.
 - La mémoire du backend est bornée (`-Xmx512m`) : deux instances coexistent brièvement.
 
@@ -135,7 +135,9 @@ bash scripts/test-zero-downtime.sh http://localhost:8088 240
 #    avec un NOUVEAU tag (backend et/ou frontend)
 ```
 
-Le script envoie une requête toutes les 0,2 s à `/health` (frontend) et à `/api/dossiers` (backend), compte les réponses valides et les échecs (`000` = connexion coupée, `502`, `503`, `504`, `404` Traefik) et conclut **« aucune coupure détectée »** ou **« coupure détectée »** avec l'heure des échecs. Pour tester `/api/dossiers` avec un vrai jeton (réponse 200) : `TEST_USER=etatcivil1@samatur.sn TEST_PASSWORD=… bash scripts/test-zero-downtime.sh …`.
+Le script envoie une requête toutes les 0,2 s à `/` (page d'accueil du frontend) et à `/api/dossiers` (backend), compte les réponses valides et les échecs (`000` = connexion coupée, `502`, `503`, `504`, `404` Traefik) et conclut **« aucune coupure détectée »** ou **« coupure détectée »** avec l'heure des échecs. `/health` du frontend est mesuré à titre **informatif** : c'est le signal de drainage, qui répond 503 par conception pendant quelques centaines de millisecondes avant l'arrêt de l'ancien conteneur. Ce 503 n'est pas vu par un utilisateur, car Traefik retire le conteneur du routage et la page d'accueil reste servie ; il n'entre donc pas dans le verdict.
+
+Pour tester `/api/dossiers` avec un vrai jeton (réponse 200) : `TEST_USER=etatcivil1@samatur.sn TEST_PASSWORD=… bash scripts/test-zero-downtime.sh …`.
 
 Pour la preuve du dossier : conserver la sortie du script et la capture du build `deployment-cd` terminé pendant la mesure, dans `preuves/`.
 

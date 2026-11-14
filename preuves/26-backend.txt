@@ -1,0 +1,10 @@
+Début : 21:53:12.625 - 240s sur http://localhost:8088
+Lancer MAINTENANT le job deployment-cd avec un nouveau tag (backend et/ou frontend).
+Fin : 21:57:12.193
+
+health  réussies : 1008   échecs : 0
+api     réussies : 982   échecs : 1
+        premier échec : 21:55:04.795   dernier : 21:55:04.795
+        21:55:04.795  api  000  ECHEC
+
+RÉSULTAT : coupure détectée.
