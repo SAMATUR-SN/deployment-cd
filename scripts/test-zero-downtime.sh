@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Preuve de mise à jour sans coupure (tâche #26).
-# Envoie des requêtes en continu sur /health (frontend) et /api/dossiers (backend)
-# PENDANT qu'un déploiement tourne, puis donne un bilan par adresse.
+# Envoie des requêtes en continu sur la page d'accueil du frontend (/) et sur /api/dossiers
+# (backend) PENDANT qu'un déploiement tourne, puis donne un bilan par adresse.
+# /health du frontend est mesuré à titre INFORMATIF seulement : c'est le signal de drainage
+# (503 voulu quelques centaines de ms avant l'arrêt de l'ancien conteneur), pas ce que voit
+# un utilisateur.
 #
 # Usage : bash scripts/test-zero-downtime.sh [url_de_base] [durée_en_secondes]
 #   ex  : bash scripts/test-zero-downtime.sh http://localhost:8088 240
@@ -10,7 +13,7 @@
 #   TEST_USER=etatcivil1@samatur.sn TEST_PASSWORD=...   (comptes de démonstration)
 #
 # Codes comptés comme « service disponible » :
-#   /health         : 200
+#   /               : 200 (page d'accueil Angular)
 #   /api/dossiers   : 200 avec jeton ; 200, 401 ou 403 sans jeton (la requête a atteint le backend)
 # Tout le reste (000 = connexion coupée, 404 Traefik, 502, 503, 504) est un échec.
 set -uo pipefail
@@ -68,15 +71,16 @@ probe() {
 
 echo "Début : $(now) - ${DURATION}s sur ${BASE}"
 echo "Lancer MAINTENANT le job deployment-cd avec un nouveau tag (backend et/ou frontend)."
-probe health "${BASE}/health" 200 &
+probe front "${BASE}/" 200 &
 # shellcheck disable=SC2086
 probe api "${BASE}/api/dossiers" $API_OK &
+probe health "${BASE}/health" 200 &
 wait
 echo "Fin : $(now)"
 echo
 
 status=0
-for name in health api; do
+for name in front api; do
   read -r ok ko first last < "$TMP/${name}.result"
   printf '%-7s réussies : %s   échecs : %s\n' "$name" "$ok" "$ko"
   if [ "$ko" -gt 0 ]; then
@@ -85,6 +89,8 @@ for name in health api; do
     grep ECHEC "$TMP/${name}.log" | head -5 | sed 's/^/        /'
   fi
 done
+read -r ok ko first last < "$TMP/health.result"
+printf '%-7s réussies : %s   503 de drainage ou échecs : %s   (informatif, non compté)\n' health "$ok" "$ko"
 echo
 if [ "$status" -eq 0 ]; then
   echo "RÉSULTAT : aucune coupure détectée."

@@ -68,6 +68,11 @@ services:
       SAMATUR_JWT_SECRET: ${SAMATUR_JWT_SECRET:?SAMATUR_JWT_SECRET manquant (credential Jenkins samatur-jwt-secret, 32 caractères minimum)}
       SAMATUR_JWT_EXPIRATION: ${SAMATUR_JWT_EXPIRATION:-28800000}
       SAMATUR_DELAI_CIBLE_JOURS: ${SAMATUR_DELAI_CIBLE_JOURS:-15}
+      # Arrêt en douceur : à l'arrêt de l'ancien conteneur, Spring Boot refuse les nouvelles
+      # requêtes (Traefik les rejoue sur le nouveau) et termine celles en cours.
+      SERVER_SHUTDOWN: graceful
+      SPRING_LIFECYCLE_TIMEOUT_PER_SHUTDOWN_PHASE: 15s
+    stop_grace_period: 30s   # laisse le temps de l'arrêt en douceur avant SIGKILL
     # Le healthcheck (GET /health) est celui de l'image du backend.
     labels:
       - traefik.enable=true

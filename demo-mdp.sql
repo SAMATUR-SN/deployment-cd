@@ -1,0 +1,1 @@
+UPDATE utilisateur SET mot_de_passe_hash = '$2a$10$ncM1U9hCkHp36Ql3p9JHUeDB6.nJEz3u84L4Y/dJ4zFST32twg5ES' WHERE identifiant IN ('ecole1@samatur.sn','etatcivil1@samatur.sn','tribunal1@samatur.sn','superviseur@samatur.sn');
