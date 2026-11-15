@@ -7,3 +7,6 @@ docker-workflow
 maven-plugin
 nodejs
 junit
+timestamper
+sonar
+dependency-check-jenkins-plugin
